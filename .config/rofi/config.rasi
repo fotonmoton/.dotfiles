@@ -1,0 +1,19 @@
+configuration {
+  matching: "fuzzy";
+  sort: true;
+  sorting-method: "fzf";
+  window-format: "{t}";
+  display-window: "";
+  display-combi: "";
+
+  timeout {
+      action: "kb-cancel";
+      delay:  0;
+  }
+  filebrowser {
+      directories-first: true;
+      sorting-method:    "name";
+  }
+}
+
+@theme "squared-nord"
