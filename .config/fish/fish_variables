@@ -2,6 +2,7 @@
 # VERSION: 3.0
 SETUVAR --export ELECTRON_OZONE_PLATFORM_HINT:auto
 SETUVAR --export --path PATH:/usr/local/bin\x1e/usr/local/sbin\x1e/usr/bin\x1e/usr/sbin\x1e/usr/local/go/bin
+SETUVAR --export RANGER_LOAD_DEFAULT_RC:FALSE
 SETUVAR ZO_CMD:zo
 SETUVAR Z_CMD:z
 SETUVAR Z_DATA:/home/foton/\x2elocal/share/z/data
