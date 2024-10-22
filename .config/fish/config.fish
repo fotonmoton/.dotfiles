@@ -4,3 +4,9 @@ if status is-interactive
 end
 
 set -gx EDITOR nvim
+
+fx --comp fish | source
+
+zoxide init fish | source
+
+fzf --fish | source
