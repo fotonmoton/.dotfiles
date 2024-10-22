@@ -228,10 +228,12 @@ bindsym $mod+r mode "resize"
 #
 
 exec swaylock
-workspace 1
-exec $browser
-workspace 2
+workspace 3
 exec obsidian
+workspace 2
+exec $browser
+workspace 1
+exec $term
 
 
 ### Idle configuration

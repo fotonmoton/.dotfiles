@@ -11,6 +11,6 @@ set before_sleep 'swaylock -f -c 000000'
 
 exec swayidle -w    \
   timeout 300 $lock \
-  timeout 600 $off  \
+  timeout 900 $off  \
   resume $resume    \
   before-sleep $before_sleep
