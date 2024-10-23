@@ -1,4 +1,16 @@
 #!/usr/bin/fish
 
-swaymsg -t get_tree -r | jq -r '.. | select(.app_id?) | (.pid|tostring) + " " + .app_id + " " + .name' | fzf --with-nth 2.. | awk '{print $1}' | xargs printf "[pid=%d] focus" | xargs swaymsg
+set lock /tmp/window_switcher_lock
 
+test -e $lock && exit
+
+touch $lock
+
+set windows (swaymsg -t get_tree -r)
+set query '.. | select(.app_id?) | (.pid|tostring) + " " + .app_id + " " + .name'
+set fzf_options --with-nth 2.. 
+set id (echo $windows | jq -r $query | fzf $fzf_options | awk '{print $1}')
+
+swaymsg "[pid=$id]" focus
+
+rm $lock
