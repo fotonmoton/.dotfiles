@@ -106,6 +106,7 @@ input "type:keyboard" {
     bindsym $mod+Space exec $menu
     bindsym $mod+Tab workspace next
     bindsym $mod+Backspace exec ~/.scripts/kitty_shell.fish ~/.scripts/power.fish
+    bindsym $mod+Slash exec ~/.scripts/kitty_shell.fish ~/.scripts/switcher.fish
     bindsym $mod+grave exec ~/.scripts/shot.fish
     bindsym $mod+backslash exec KS_WIDTH=30c KS_HEIGHT=1c ~/.scripts/kitty_shell.fish ~/.scripts/search.fish
     
