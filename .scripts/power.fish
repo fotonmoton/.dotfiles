@@ -1,6 +1,8 @@
 #!/usr/bin/fish
 
-set action (echo -e "hibernate\nreboot\npoweroff\nsuspend\nlock" | rofi -dmenu -p "to:")  
+set options "hibernate\nreboot\npoweroff\nsuspend\nlock"
+
+set action (echo -e $options | fzf)  
 
 if test "$action" = "lock"
 	swaylock
