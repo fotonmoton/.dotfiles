@@ -229,6 +229,7 @@ bindsym $mod+r mode "resize"
 #
 
 exec swaylock
+exec tuxedo-control-center --tray
 workspace 3
 exec obsidian
 workspace 2

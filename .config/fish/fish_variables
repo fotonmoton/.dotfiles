@@ -1,7 +1,7 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR --export ELECTRON_OZONE_PLATFORM_HINT:auto
-SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dwalker\x2dskip\x3d\x2esteam\x2c\x2evscode\x2c\x2ecargo\x2c\x2enpm\x2c\x2envm\x2cSteam\x2cgo\x2c\x2ecache\x2c\x2epub\x2dcache\x2c\x2erustup
+SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dwalker\x2dskip\x3d\x2esteam\x2c\x2evscode\x2c\x2ecargo\x2c\x2enpm\x2c\x2envm\x2cSteam\x2cgo\x2c\x2ecache\x2c\x2epub\x2dcache\x2c\x2erustup\x2c\x2ecfgstore
 SETUVAR --export --path PATH:/usr/local/bin\x1e/usr/local/sbin\x1e/usr/bin\x1e/usr/sbin\x1e/usr/local/go/bin
 SETUVAR --export RANGER_LOAD_DEFAULT_RC:FALSE
 SETUVAR Z_DATA_DIR:/home/foton/\x2elocal/share/z
