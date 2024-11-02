@@ -10,3 +10,5 @@ fx --comp fish | source
 zoxide init fish | source
 
 fzf --fish | source
+
+syncthing install-completions | source

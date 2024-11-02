@@ -45,6 +45,7 @@ window {
 /*
 * Right part
 */
+#idle_inhibitor,
 #pulseaudio,
 #network,
 #cpu,
@@ -60,6 +61,7 @@ window {
     color: @nord6;
 }
 
+#idle_inhibitor,
 #backlight,
 #language,
 #battery,
@@ -70,12 +72,17 @@ window {
     border-bottom-right-radius: 5px;
 }
 
+#idle_inhibitor,
 #pulseaudio,
 #network,
 #clock,
 #tray {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
+}
+
+#idle_inhibitor.activated {
+    background-color: @nord10;
 }
 
 #pulseaudio.muted {
