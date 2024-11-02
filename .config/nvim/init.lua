@@ -157,6 +157,7 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+vim.opt.list = false
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 -- [[ Basic Keymaps ]]
@@ -933,10 +934,10 @@ require("lazy").setup({
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = "gnn",
-          node_incremental = "grn",
-          scope_incremental = "grc",
-          node_decremental = "grm",
+          init_selection = "<CR>",
+          scope_incremental = "<CR>",
+          node_incremental = "<TAB>",
+          node_decremental = "<S-TAB>",
         },
       },
     },
