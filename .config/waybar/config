@@ -96,6 +96,7 @@
     "on-click": "swaymsg input type:keyboard xkb_switch_layout next"
   },
   "idle_inhibitor": {
+		"start-activated": true,
     "format": "{icon}",
     "format-icons": {
       "activated": "",
