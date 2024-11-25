@@ -89,9 +89,6 @@ P.S. You can delete this when you're done too. It's your config now! :)
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
--- disable netrw at the very start of your init.lua
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
@@ -165,6 +162,9 @@ vim.opt.scrolloff = 10
 vim.opt.list = false
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
+
+vim.wo.wrap = false
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -172,14 +172,17 @@ vim.opt.shiftwidth = 2
 --  See `:help hlsearch`
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
--- do not run recording
-vim.keymap.set("n", "q", "<nop>")
+-- close buffers with q
+vim.keymap.set("n", "q", ":bd<cr>")
+vim.keymap.set("n", "Q", ":bd<cr>")
+
+-- delete without cut
+vim.keymap.set("n", "d", '"_d')
+vim.keymap.set("v", "d", '"_d')
 
 -- Ctrl+s to save
 vim.keymap.set("n", "<C-s>", ":w<CR>")
 vim.keymap.set("i", "<C-s>", "<ESC>:w<CR>a")
--- NvimTree
-vim.keymap.set("n", "<C-e>", ":NvimTreeFocus <CR>")
 
 -- ; for command mode
 vim.keymap.set("n", ";", ":")
@@ -227,7 +230,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
   desc = "diagnostics on hold",
   group = vim.api.nvim_create_augroup("diagnostics", { clear = true }),
-  callback = vim.diagnostic.open_float,
+  callback = function()
+    vim.diagnostic.open_float(nil, { focus = false })
+  end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
@@ -254,19 +259,9 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require("lazy").setup({
+  "stevearc/dressing.nvim",
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   "tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
-  {
-    "nvim-tree/nvim-tree.lua",
-    version = "*",
-    lazy = false,
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-    },
-    config = function()
-      require("nvim-tree").setup {}
-    end,
-  },
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -288,7 +283,26 @@ require("lazy").setup({
   -- Then, because we use the `config` key, the configuration only runs
   -- after the plugin has been loaded:
   --  config = function() ... end
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      { "fredrikaverpil/neotest-golang", version = "*" }, -- Installation
+    },
+    config = function()
+      require("neotest").setup {
+        adapters = {
+          require "neotest-golang", -- Registration
+        },
+      }
 
+      vim.keymap.set("n", "<leader>ts", require("neotest").summary.toggle, { desc = "[T]est [S]ummary" })
+      vim.keymap.set("n", "<leader>tr", require("neotest").run.run, { desc = "[T]est [R]un" })
+    end,
+  },
   { -- Useful plugin to show you pending keybinds.
     "folke/which-key.nvim",
     event = "VimEnter", -- Sets the loading event to 'VimEnter'
@@ -337,12 +351,86 @@ require("lazy").setup({
         { "<leader>r", group = "[R]ename" },
         { "<leader>s", group = "[S]earch" },
         { "<leader>w", group = "[W]orkspace" },
-        { "<leader>t", group = "[T]oggle" },
+        { "<leader>t", group = "[T]est" },
         { "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
       },
     },
   },
-
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    ---@type Flash.Config
+    opts = {
+      jump = {
+        autojump = true,
+      },
+      label = {
+        before = true,
+        after = false,
+        min_pattern_length = 0,
+        style = "overlay",
+        -- With `format`, you can change how the label is rendered.
+        -- Should return a list of `[text, highlight]` tuples.
+        ---@class Flash.Format
+        ---@type fun(opts:Flash.Format): string[][]
+        -- format = function(opts)
+        --   return {
+        --     { opts.match.label1, "FlashMatch" },
+        --     { opts.match.label2, "FlashLabel" },
+        --   }
+        -- end,
+      },
+    },
+    keys = {
+      {
+        "s",
+        mode = { "n", "x", "o" },
+        function()
+          require("flash").jump()
+        end,
+        desc = "Flash",
+      },
+      {
+        "S",
+        mode = { "n", "x", "o" },
+        function()
+          require("flash").treesitter()
+        end,
+        desc = "Flash Treesitter",
+      },
+      {
+        "r",
+        mode = "o",
+        function()
+          require("flash").remote()
+        end,
+        desc = "Remote Flash",
+      },
+      {
+        "R",
+        mode = { "o", "x" },
+        function()
+          require("flash").treesitter_search()
+        end,
+        desc = "Treesitter Search",
+      },
+      {
+        "<c-f>",
+        mode = { "c" },
+        function()
+          require("flash").toggle()
+        end,
+        desc = "Toggle Flash Search",
+      },
+    },
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equivalent to setup({}) function
+  },
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -422,7 +510,7 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
       vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
       vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
-      vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+      vim.keymap.set("n", "<leader>ss", builtin.lsp_document_symbols, { desc = "[S]earch [S]ymbols" })
       vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
       vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
       vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
@@ -547,7 +635,7 @@ require("lazy").setup({
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+          -- map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
@@ -592,16 +680,6 @@ require("lazy").setup({
                 vim.api.nvim_clear_autocmds { group = "kickstart-lsp-highlight", buffer = event2.buf }
               end,
             })
-          end
-
-          -- The following code creates a keymap to toggle inlay hints in your
-          -- code, if the language server you are using supports them
-          --
-          -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-            map("<leader>th", function()
-              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, "[T]oggle Inlay [H]ints")
           end
         end,
       })
@@ -840,7 +918,6 @@ require("lazy").setup({
           end, { "i", "s" }),
           ["<C-h>"] = cmp.mapping(function()
             if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
             end
           end, { "i", "s" }),
 
@@ -886,7 +963,16 @@ require("lazy").setup({
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = { signs = false },
   },
-
+  {
+    "kylechui/nvim-surround",
+    version = "*", -- Use for stability; omit to use `main` branch for the latest features
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup {
+        -- Configuration here, or leave empty to use defaults
+      }
+    end,
+  },
   { -- Collection of various small independent plugins/modules
     "echasnovski/mini.nvim",
     config = function()
@@ -897,13 +983,6 @@ require("lazy").setup({
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
       require("mini.ai").setup { n_lines = 500 }
-
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [Surround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
-      require("mini.surround").setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -995,6 +1074,8 @@ require("lazy").setup({
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
 }, {
+  -- colorscheme that will be used when installing plugins.
+  install = { colorscheme = { "tokyonight-storm" } },
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table

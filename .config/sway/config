@@ -8,7 +8,7 @@ client.focused_inactive #88c0d0 #2e3440 #d8dee9 #4c566a   #4c566a
 client.unfocused        #88c0d0 #2e3440 #d8dee9 #4c566a   #4c566a
 client.urgent           #ebcb8b #ebcb8b #2e3440 #8fbcbb   #ebcb8b
 
-workspace_layout default
+workspace_layout tabbed
 # default_border normal
 # default_floating_border none
 # font pango:monospace 0.001
@@ -63,10 +63,8 @@ output $laptop {
 bindswitch --reload --locked lid:on output $laptop disable
 bindswitch --reload --locked lid:off output $laptop enable
 
+workspace 1 output $laptop
 workspace 1 output $external
-workspace 2 output $external
-workspace 3 output $external
-workspace 4 output $external
 
 focus_on_window_activation focus
 
@@ -87,8 +85,8 @@ input "type:pointer" {
 }
 
 input "type:keyboard" {
-    repeat_delay 200
-    repeat_rate 100
+    repeat_delay 400
+    repeat_rate 50
     xkb_layout us,ru,ua
     xkb_options "grp:alt_space_toggle,ctrl:swap_lalt_lctl"
 }
@@ -102,6 +100,7 @@ input "type:keyboard" {
 #
 # Basics:
 #
+    bindsym $mod+g exec $term fish -c y
     bindsym $mod+Return exec $term
     bindsym $mod+Shift+q kill
     bindsym $mod+Space exec $menu
@@ -229,7 +228,7 @@ bindsym $mod+r mode "resize"
 ### Autostart
 #
 
-
+exec udiskie -t
 exec syncthing serve
 exec swaylock
 exec tuxedo-control-center --tray
