@@ -63,7 +63,6 @@ output $laptop {
 bindswitch --reload --locked lid:on output $laptop disable
 bindswitch --reload --locked lid:off output $laptop enable
 
-workspace 1 output $laptop
 workspace 1 output $external
 
 focus_on_window_activation focus
@@ -229,15 +228,8 @@ bindsym $mod+r mode "resize"
 #
 
 exec udiskie -t
-exec syncthing serve
 exec swaylock
 exec tuxedo-control-center --tray
-workspace 3
-exec obsidian
-workspace 2
-exec $browser
-workspace 1
-exec $term
 
 
 ### Idle configuration
